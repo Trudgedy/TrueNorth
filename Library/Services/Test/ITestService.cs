@@ -5,7 +5,7 @@ using Library.Data.Entities.Test;
 namespace Library.Services
 {
 
-	public interface ITestClassService
+	public interface ITestService
 	{
 		List<TestClass> GetAll(Int32 page = 0, Int32 pageSize = Int32.MaxValue);
 

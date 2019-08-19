@@ -1,5 +1,7 @@
 using System;
 using System.Text;
+using Library.Data;
+using Library.Services.Caching;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +24,20 @@ namespace TrueNorthBackoffice
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+
+			#region Data
+
+			services.AddDbContext<DatabaseContext>(options =>
+			   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+			services.AddScoped<IDataContext>(sp => sp.GetRequiredService<DatabaseContext>());
+
+			services.AddScoped<ICacheManager, MemoryCacheManager>();
+			services.AddScoped(typeof(IDataRepository<>), typeof(DataRepository<>));
+
+			//Resolve services
+			services.AddScoped<Library.Services.ITestService, Library.Services.TestService>();
+
+			#endregion
 
 			#region Authentication
 			services.AddDbContext<AuthentificationContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -78,6 +94,8 @@ namespace TrueNorthBackoffice
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
+			UpdateDatabase(app);
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -108,6 +126,23 @@ namespace TrueNorthBackoffice
 					spa.UseAngularCliServer(npmScript: "start");
 				}
 			});
+		}
+
+		private static void UpdateDatabase(IApplicationBuilder app)
+		{
+			using (var serviceScope = app.ApplicationServices
+				.GetRequiredService<IServiceScopeFactory>()
+				.CreateScope())
+			{
+				using (var context = serviceScope.ServiceProvider.GetService<AuthentificationContext>())
+				{
+					context.Database.Migrate();
+				}
+				using (var context = serviceScope.ServiceProvider.GetService<DatabaseContext>())
+				{
+					context.Database.Migrate();
+				}
+			}
 		}
 	}
 }

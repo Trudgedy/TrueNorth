@@ -9,7 +9,7 @@ using Library.Services.Caching;
 namespace Library.Services
 {
 
-	public class TestClassService : ITestClassService
+	public class TestService : ITestService
 	{
 		#region Constants
 		private const string KEY_PATTERN = "Cache.TestClass";
@@ -24,7 +24,7 @@ namespace Library.Services
 		#endregion
 
 		#region Constructor
-		public TestClassService(IDataRepository<TestClass> EntityTypeNameRepo, IDataContext db, ICacheManager cacheManager)
+		public TestService(IDataRepository<TestClass> EntityTypeNameRepo, IDataContext db, ICacheManager cacheManager)
 		{
 			_testClassRepo = EntityTypeNameRepo;
 			_db = db;

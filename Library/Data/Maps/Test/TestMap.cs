@@ -8,6 +8,7 @@ namespace Library.Data.Maps.Test
 	{
 		public void Configure(EntityTypeBuilder<TestClass> builder)
 		{
+			//builder.ToTable("TEst");
 			//Define primary key
 			builder.HasKey(a => a.Id);
 		}

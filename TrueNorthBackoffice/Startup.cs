@@ -54,8 +54,7 @@ namespace TrueNorthBackoffice
 			});
 			services.AddCors();
 
-			services.Configure<DataProtectionTokenProviderOptions>(o =>
-				o.TokenLifespan = TimeSpan.FromDays(7));
+			
 
 			//Jwt Authentification
 			var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:JWT_Secret"].ToString());
